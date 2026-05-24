@@ -74,84 +74,66 @@ export async function register(req, res) {
 }
 
 // LOGIN
+// LOGIN
 export async function login(req, res) {
 
   try {
 
-    const {
-      email,
-      password
-    } = req.body;
+    const { email, password } = req.body;
 
-    if (
-      !email ||
-      !password
-    ) {
+    if (!email || !password) {
       return res.status(401).send({
         success: false,
-        message:
-          "all field required"
+        message: "all field required"
       });
     }
 
-    const user =
-      await User.findOne({
-        email
-      });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(401).send({
         success: false,
-        message:
-          "user not found"
+        message: "user not found"
       });
     }
 
-    const isMatch =
-      await bcrypt.compare(
-        password,
-        user.password
-      );
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isMatch) {
       return res.status(401).send({
         success: false,
-        message:
-          "Invalid credential"
+        message: "Invalid credential"
       });
     }
 
-    const token =
-      jwt.sign(
-        {
-          id: user._id,
-          role:
-            user.role
-        },
-        process.env
-          .SECRET_KEY,
-        {
-          expiresIn:
-            "7d"
-        }
-      );
-
-    res.cookie(
-      "token",
-      token,
+    const token = jwt.sign(
       {
-        maxAge:
-          7 * 24 *
-          60 * 60 *
-          1000,
-        httpOnly: true
+        id: user._id,
+        role: user.role
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "7d"
       }
     );
 
+    // REMOVE PASSWORD
+    user.password = undefined;
+
+    // COOKIE FIX FOR HOSTING
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "None"
+    });
+
     return res.status(200).send({
       success: true,
-      message:
-        "login successfully",
+      message: "login successfully",
       token,
       user
     });
@@ -160,15 +142,13 @@ export async function login(req, res) {
 
     console.log(err);
 
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message:
-        "error",
+      message: "error",
       err
     });
   }
 }
-
 // FORGET PASSWORD
 export async function forgetPassword(req, res) {
 
