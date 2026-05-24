@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState
+} from 'react';
+
 import Layout from '../Layout';
 import Admin from './Admin';
 import { baseUrl1 } from '../../AxiosR';
@@ -7,105 +11,149 @@ import CategoryForm from '../form/CategoryForm';
 
 export default function CategoryR() {
 
-  const [category, setCategory] = useState([]);
-  const [name, setName] = useState('');
-  const [editId, setEditId] = useState(null);
+  const [category, setCategory] =
+    useState([]);
+
+  const [name, setName] =
+    useState('');
+
+  const [editId, setEditId] =
+    useState(null);
+
+  // TOKEN
+  const token =
+    localStorage.getItem(
+      "token"
+    );
 
   // Create + Update
-  const submitData = async (e) => {
+  const submitData =
+    async (e) => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    try {
+      try {
 
-      let data;
+        let data;
 
-      if (editId) {
+        if (editId) {
 
-        // Update
-        ({ data } = await baseUrl1.post(
-          `/update/${editId}`,
-          { name }
-        ));
+          ({ data } =
+            await baseUrl1.post(
+              `/update/${editId}`,
+              { name },
+              {
+                headers: {
+                  Authorization:
+                    `Bearer ${token}`
+                }
+              }
+            ));
 
-      } else {
+        } else {
 
-        // Create
-        ({ data } = await baseUrl1.post(
-          "/cate",
-          { name }
-        ));
+          ({ data } =
+            await baseUrl1.post(
+              "/cate",
+              { name },
+              {
+                headers: {
+                  Authorization:
+                    `Bearer ${token}`
+                }
+              }
+            ));
+        }
 
+        if (data?.success) {
+
+          toast.success(
+            data?.message
+          );
+
+          setName('');
+          setEditId(null);
+          getAllProduct();
+
+        } else {
+
+          toast.error(
+            data?.message
+          );
+        }
+
+      } catch (error) {
+
+        console.log(error);
+        toast.error(
+          "Invalid Data"
+        );
       }
-
-      if (data?.success) {
-
-        toast.success(data?.message);
-        setName('');
-        setEditId(null);
-        getAllProduct();
-
-      } else {
-
-        toast.error(data?.message);
-
-      }
-
-    } catch (error) {
-
-      console.log(error);
-      toast.error("Invalid Data");
-
-    }
-  };
+    };
 
   // Get Categories
-  const getAllProduct = async () => {
+  const getAllProduct =
+    async () => {
 
-    try {
+      try {
 
-      const { data } = await baseUrl1.get("/getAll");
+        const { data } =
+          await baseUrl1.get(
+            "/getAll"
+          );
 
-      if (data?.success) {
+        if (data?.success) {
 
-        setCategory(data.category);
+          setCategory(
+            data.category
+          );
+        }
 
+      } catch (error) {
+
+        console.log(error);
       }
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-  };
+    };
 
   useEffect(() => {
     getAllProduct();
   }, []);
 
   // Delete
-  const deleteData = async (id) => {
+  const deleteData =
+    async (id) => {
 
-    try {
+      try {
 
-      const { data } = await baseUrl1.post(
-        `/delete/${id}`
-      );
+        const { data } =
+          await baseUrl1.post(
+            `/delete/${id}`,
+            {},
+            {
+              headers: {
+                Authorization:
+                  `Bearer ${token}`
+              }
+            }
+          );
 
-      if (data?.success) {
+        if (data?.success) {
 
-        toast.success(data?.message);
-        getAllProduct();
+          toast.success(
+            data?.message
+          );
 
+          getAllProduct();
+        }
+
+      } catch (error) {
+
+        console.log(error);
+        toast.error(
+          "Invalid Data"
+        );
       }
-
-    } catch (error) {
-
-      console.log(error);
-      toast.error("Invalid Data");
-
-    }
-  };
+    };
 
   return (
     <Layout>
@@ -114,20 +162,14 @@ export default function CategoryR() {
 
         <div className='row'>
 
-          {/* Sidebar */}
           <div className='col-md-3 mb-4'>
-
             <div className='card shadow border-0 rounded-4'>
-
               <div className='card-body'>
                 <Admin />
               </div>
-
             </div>
-
           </div>
 
-          {/* Content */}
           <div className='col-md-9'>
 
             <div className='card shadow border-0 rounded-4'>
@@ -138,63 +180,74 @@ export default function CategoryR() {
                   Category
                 </h1>
 
-                {/* Form */}
                 <CategoryForm
                   submitData={submitData}
                   value={name}
                   setValue={setName}
-                  buttonText={editId ? "Update" : "Submit"}
+                  buttonText={
+                    editId
+                      ? "Update"
+                      : "Submit"
+                  }
                 />
 
-                {/* Table */}
                 <table className='table table-bordered mt-4'>
 
                   <thead className='table-dark'>
-
                     <tr>
                       <th>S.NO</th>
                       <th>Name</th>
                       <th>Action</th>
                     </tr>
-
                   </thead>
 
                   <tbody>
 
-                    {category?.map((item, idx) => (
+                    {category?.map(
+                      (item, idx) => (
 
-                      <tr key={item._id}>
+                        <tr key={item._id}>
 
-                        <td>{idx + 1}</td>
+                          <td>
+                            {idx + 1}
+                          </td>
 
-                        <td>{item.name}</td>
+                          <td>
+                            {item.name}
+                          </td>
 
-                        <td>
+                          <td>
 
-                          {/* Edit */}
-                          <button
-                            className='btn btn-primary btn-sm me-2'
-                            onClick={() => {
-                              setName(item.name);
-                              setEditId(item._id);
-                            }}
-                          >
-                            Edit
-                          </button>
+                            <button
+                              className='btn btn-primary btn-sm me-2'
+                              onClick={() => {
+                                setName(
+                                  item.name
+                                );
+                                setEditId(
+                                  item._id
+                                );
+                              }}
+                            >
+                              Edit
+                            </button>
 
-                          {/* Delete */}
-                          <button
-                            className='btn btn-danger btn-sm'
-                            onClick={() => deleteData(item._id)}
-                          >
-                            Delete
-                          </button>
+                            <button
+                              className='btn btn-danger btn-sm'
+                              onClick={() =>
+                                deleteData(
+                                  item._id
+                                )
+                              }
+                            >
+                              Delete
+                            </button>
 
-                        </td>
+                          </td>
 
-                      </tr>
-
-                    ))}
+                        </tr>
+                      )
+                    )}
 
                   </tbody>
 
