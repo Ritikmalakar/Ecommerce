@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken";
 
-import jwt from "jsonwebtoken";
-
 export async function authUser(req, res, next) {
 
   try {
@@ -38,7 +36,6 @@ export async function authUser(req, res, next) {
       message: "Invalid token"
     });
   }
-
 }
 
 export async function adminUser(req, res, next) {
