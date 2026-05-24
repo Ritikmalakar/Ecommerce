@@ -16,70 +16,44 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/ProductRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 
-const app =
-  express();
+const app = express();
 
-app.use(
-  express.json()
-);
+app.use(express.json());
+app.use(cookieParser());
 
-app.use(
-  cookieParser()
-);
-
+// CORS FIX
 app.use(
   cors({
-    origin:
+    origin: [
       "http://localhost:5173",
-    credentials:
-      true
+      "https://quick-mart-unqa.onrender.com"
+    ],
+    credentials: true
   })
 );
 
 // Routes
-app.use(
-  "/user",
-  userRoutes
-);
+app.use("/user", userRoutes);
+app.use("/category", categoryRoutes);
+app.use("/product", productRoutes);
+app.use("/stripe", paymentRoutes);
 
-app.use(
-  "/category",
-  categoryRoutes
-);
-
-app.use(
-  "/product",
-  productRoutes
-);
-
-app.use(
-  "/stripe",
-  paymentRoutes
-);
+// Root route
+app.get("/", (req, res) => {
+  res.send("API Running...");
+});
 
 // Start Server
-async function
-startServer() {
-
+async function startServer() {
   try {
-
     await connectDb();
 
-    app.listen(
-      process.env.PORT,
-      () => {
-
-        console.log(
-          "server started"
-        );
-      }
-    );
+    app.listen(process.env.PORT, () => {
+      console.log("server started");
+    });
 
   } catch (err) {
-
-    console.log(
-      err
-    );
+    console.log(err);
   }
 }
 
