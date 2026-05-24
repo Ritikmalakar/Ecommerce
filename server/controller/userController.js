@@ -74,66 +74,99 @@ export async function register(req, res) {
 }
 
 // LOGIN
-// LOGIN
 export async function login(req, res) {
 
   try {
 
-    const { email, password } = req.body;
+    const { email, password } =
+      req.body;
 
     if (!email || !password) {
+
       return res.status(401).send({
         success: false,
-        message: "all field required"
+        message:
+          "all field required"
       });
     }
 
-    const user = await User.findOne({ email });
+    const user =
+      await User.findOne({
+        email
+      });
 
     if (!user) {
+
       return res.status(401).send({
         success: false,
-        message: "user not found"
+        message:
+          "user not found"
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isMatch =
+      await bcrypt.compare(
+        password,
+        user.password
+      );
 
     if (!isMatch) {
+
       return res.status(401).send({
         success: false,
-        message: "Invalid credential"
+        message:
+          "Invalid credential"
       });
     }
 
-    const token = jwt.sign(
+    const token =
+      jwt.sign(
+        {
+          id: user._id,
+          role: user.role
+        },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: "7d"
+        }
+      );
+
+    // remove password
+    user.password =
+      undefined;
+
+    // HOSTING COOKIE FIX
+    res.cookie(
+      "token",
+      token,
       {
-        id: user._id,
-        role: user.role
-      },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: "7d"
+        maxAge:
+          7 * 24 *
+          60 * 60 *
+          1000,
+
+        httpOnly: true,
+
+        secure:
+          process.env
+            .NODE_ENV ===
+          "production",
+
+        sameSite:
+          process.env
+            .NODE_ENV ===
+          "production"
+            ? "None"
+            : "Lax",
+
+        path: "/"
       }
     );
 
-    // REMOVE PASSWORD
-    user.password = undefined;
-
-    // COOKIE FIX FOR HOSTING
-   res.cookie("token", token, {
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-  httpOnly: true,
-  secure: true,
-  sameSite: "None",
-  path: "/"
-});
     return res.status(200).send({
       success: true,
-      message: "login successfully",
+      message:
+        "login successfully",
       token,
       user
     });
@@ -144,7 +177,8 @@ export async function login(req, res) {
 
     return res.status(500).send({
       success: false,
-      message: "error",
+      message:
+        "error",
       err
     });
   }
