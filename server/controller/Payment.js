@@ -90,8 +90,9 @@ export const stripePayment =
             mode:
               "payment",
 
+            // FIXED ROUTE
             success_url:
-              `${process.env.SECRET_USER}/orders?success=true&session_id={CHECKOUT_SESSION_ID}`,
+              `${process.env.SECRET_USER}/user/order?success=true&session_id={CHECKOUT_SESSION_ID}`,
 
             cancel_url:
               `${process.env.SECRET_USER}/cancel`
@@ -103,8 +104,7 @@ export const stripePayment =
 
           products:
             products.map(
-              (p) =>
-                p._id
+              (p) => p._id
             ),
 
           buyer:
@@ -181,7 +181,6 @@ export const paymentStatus =
           });
       }
 
-      // Get Stripe Session
       const session =
         await stripe
           .checkout
@@ -190,7 +189,6 @@ export const paymentStatus =
             session_id
           );
 
-      // Update Order
       const order =
         await Order
           .findOneAndUpdate(
@@ -286,9 +284,7 @@ export const userOrders =
             "name email"
           )
           .sort({
-
-            createdAt:
-              -1
+            createdAt: -1
           });
 
       return res
@@ -303,9 +299,7 @@ export const userOrders =
 
     } catch (error) {
 
-      console.log(
-        error
-      );
+      console.log(error);
 
       return res
         .status(500)
