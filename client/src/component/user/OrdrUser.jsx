@@ -16,12 +16,10 @@ import {
 
 export default function OrdrUser() {
 
-  const [orders,
-    setOrders] =
+  const [orders, setOrders] =
     useState([]);
 
-  const [loading,
-    setLoading] =
+  const [loading, setLoading] =
     useState(true);
 
   const [params] =
@@ -30,14 +28,10 @@ export default function OrdrUser() {
   useEffect(() => {
 
     let session_id =
-      params.get(
-        "session_id"
-      );
+      params.get("session_id");
 
     // Payment ke baad
-    if (
-      session_id
-    ) {
+    if (session_id) {
 
       localStorage.setItem(
         "stripe_session",
@@ -60,15 +54,12 @@ export default function OrdrUser() {
   // Payment Order
   // ===================
   const getPaymentStatus =
-    async (
-      session_id
-    ) => {
+    async (session_id) => {
 
       try {
 
         const res =
           await baseUrl3.get(
-
             `/payment-status?session_id=${session_id}`
           );
 
@@ -93,15 +84,11 @@ export default function OrdrUser() {
 
       } catch (err) {
 
-        console.log(
-          err
-        );
+        console.log(err);
 
       } finally {
 
-        setLoading(
-          false
-        );
+        setLoading(false);
       }
     };
 
@@ -147,15 +134,11 @@ export default function OrdrUser() {
 
       } catch (err) {
 
-        console.log(
-          err
-        );
+        console.log(err);
 
       } finally {
 
-        setLoading(
-          false
-        );
+        setLoading(false);
       }
     };
 
@@ -198,20 +181,17 @@ export default function OrdrUser() {
                   <h4 className="text-success">
                     Payment Status :
                     {" "}
-                    {
-                      order.paymentStatus
-                    }
+                    {order.paymentStatus}
                   </h4>
 
                   <h5>
                     Total :
                     {" "}
                     ₹
-                    {
-                      order.amount
-                    }
+                    {order.amount}
                   </h5>
 
+                  {/* Order Date */}
                   <p>
                     Order Date :
                     {" "}
@@ -220,6 +200,21 @@ export default function OrdrUser() {
                         order.createdAt
                       )
                       .toLocaleString()
+                    }
+                  </p>
+
+                  {/* Delivery Date = Order Date + 7 Days */}
+                  <p className="text-primary fw-bold">
+                    Delivery Date :
+                    {" "}
+                    {
+                      new Date(
+                        new Date(
+                          order.createdAt
+                        ).getTime() +
+                        7 * 24 * 60 * 60 * 1000
+                      )
+                      .toLocaleDateString()
                     }
                   </p>
 
@@ -243,25 +238,20 @@ export default function OrdrUser() {
                             src={`${baseUrl2.defaults.baseURL}/product-photo/${p._id}`}
                             alt={p.name}
                             style={{
-                              width:
-                                "100px",
-                              height:
-                                "100px",
-                              objectFit:
-                                "cover",
-                              borderRadius:
-                                "10px",
-                              border:
-                                "1px solid #ddd"
+                              width: "100px",
+                              height: "100px",
+                              objectFit: "cover",
+                              borderRadius: "10px",
+                              border: "1px solid #ddd"
                             }}
-                            onError={(e)=>{
+                            onError={(e) => {
 
                               e.target.src =
                                 "https://via.placeholder.com/100";
                             }}
                           />
 
-                          {/* Details */}
+                          {/* Product Details */}
                           <div>
 
                             <h5>
