@@ -1,49 +1,36 @@
 import React, {
   useEffect,
   useState
-}
-from "react";
+} from "react";
 
-import Layout
-from "../component/Layout";
+import Layout from "../component/Layout";
 
 import {
   baseUrl2,
   baseUrl3
-}
-from "../AxiosR";
+} from "../AxiosR";
 
 import {
   useNavigate,
   useLocation
-}
-from "react-router-dom";
+} from "react-router-dom";
 
 export default function Cart() {
 
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const location =
-    useLocation();
-
-  const [cart,
-    setCart] =
-    useState([]);
+  const [cart, setCart] = useState([]);
 
   // Load Cart
   useEffect(() => {
 
     const data =
       JSON.parse(
-        localStorage.getItem(
-          "cart"
-        )
+        localStorage.getItem("cart")
       ) || [];
 
-    setCart(
-      data
-    );
+    setCart(data);
 
   }, []);
 
@@ -56,20 +43,15 @@ export default function Cart() {
       );
 
     const success =
-      params.get(
-        "success"
-      );
+      params.get("success");
 
     const sessionId =
-      params.get(
-        "session_id"
-      );
+      params.get("session_id");
 
     if (
       success === "true" &&
       sessionId
     ) {
-
       updatePayment(
         sessionId
       );
@@ -87,14 +69,12 @@ export default function Cart() {
 
         const { data } =
           await baseUrl3.get(
-
             `/payment-status?session_id=${sessionId}`
           );
 
         if (
           data.success &&
-          data.payment_status ===
-            "paid"
+          data.payment_status === "paid"
         ) {
 
           alert(
@@ -108,7 +88,6 @@ export default function Cart() {
 
           setCart([]);
 
-          // Redirect Order Page
           navigate(
             "/user/order",
             {
@@ -119,9 +98,7 @@ export default function Cart() {
 
       } catch (error) {
 
-        console.log(
-          error
-        );
+        console.log(error);
       }
     };
 
@@ -145,9 +122,6 @@ export default function Cart() {
       setCart(
         updatedCart
       );
-
-      // Refresh
-      window.location.reload();
     };
 
   // Total Price
@@ -158,7 +132,6 @@ export default function Cart() {
 
       cart.forEach(
         (item) => {
-
           total =
             total +
             item.price;
@@ -194,8 +167,7 @@ export default function Cart() {
             "/stripe-payment",
 
             {
-              products:
-                cart
+              products: cart
             },
 
             {
@@ -257,35 +229,34 @@ export default function Cart() {
 
                       <div className="row g-0">
 
-                        {/* Image */}
-                        <div className="col-md-4">
+                        {/* Product Image */}
+                        <div className="col-md-4 d-flex align-items-center justify-content-center p-2">
 
                           <img
                             src={`${baseUrl2.defaults.baseURL}/product-photo/${p._id}`}
                             alt={p.name}
-                            className="img-fluid rounded-start"
+                            className="img-fluid rounded"
                             style={{
-                              height:
-                                "200px",
-                              width:
-                                "100%",
-                              objectFit:
-                                "cover"
+                              height: "220px",
+                              width: "100%",
+                              objectFit: "contain",
+                              background: "#fff",
+                              padding: "10px"
                             }}
                           />
 
                         </div>
 
-                        {/* Details */}
+                        {/* Product Details */}
                         <div className="col-md-8">
 
                           <div className="card-body">
 
-                            <h5>
+                            <h5 className="card-title">
                               {p.name}
                             </h5>
 
-                            <p>
+                            <p className="card-text text-muted">
                               {
                                 p.description?.substring(
                                   0,
@@ -331,7 +302,7 @@ export default function Cart() {
 
           </div>
 
-          {/* Summary */}
+          {/* Cart Summary */}
           <div className="col-md-4">
 
             <div className="card shadow p-3">
@@ -344,17 +315,13 @@ export default function Cart() {
 
               <h5>
                 Total Items :
-                {
-                  cart.length
-                }
+                {" "}
+                {cart.length}
               </h5>
 
               <h4 className="text-success mt-3">
                 Total :
-                ₹
-                {
-                  totalPrice()
-                }
+                ₹ {totalPrice()}
               </h4>
 
               {
