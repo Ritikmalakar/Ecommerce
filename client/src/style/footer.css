@@ -1,0 +1,20 @@
+.footer{
+  padding:15px 0;
+  z-index:999;
+}
+
+/* Footer content hide na kare */
+body{
+  padding-bottom:70px;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  body{
+    padding-bottom:85px;
+  }
+
+  .footer h5{
+    font-size:14px;
+  }
+}

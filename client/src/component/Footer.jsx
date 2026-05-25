@@ -1,11 +1,12 @@
 import React from 'react'
+import '../style/footer.css'
 
 export default function Footer() {
   return (
-    <footer className="bg-dark text-light text-center p-3 fixed-bottom">
-      <h4 className="m-0">
+    <footer className="footer bg-dark text-light text-center fixed-bottom">
+      <h5 className="m-0">
         All Rights Reserved &copy; Technofoyt
-      </h4>
+      </h5>
     </footer>
   )
 }
