@@ -3,16 +3,16 @@ import nodemailer from "nodemailer";
 export const sendOtpMail = async (otp, email) => {
   try {
 
-    // transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
     });
 
-    // mail options
     const mailOptions = {
       from: process.env.MAIL_USER,
       to: email,
@@ -25,12 +25,10 @@ export const sendOtpMail = async (otp, email) => {
       `,
     };
 
-    // send mail
     await transporter.sendMail(mailOptions);
-
     console.log("OTP mail sent");
 
   } catch (error) {
-    console.log(error);
+    console.log("Mail Error:", error);
   }
 };
