@@ -1,23 +1,15 @@
 import nodemailer from "nodemailer";
-import dns from "dns";
-
-dns.setDefaultResultOrder("ipv4first");
 
 export const sendOtpMail = async (otp, email) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      requireTLS: true,
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: false,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-      tls: {
-        servername: "smtp.gmail.com"
-      }
     });
 
     await transporter.verify();
@@ -27,7 +19,7 @@ export const sendOtpMail = async (otp, email) => {
       from: process.env.MAIL_USER,
       to: email,
       subject: "Password Reset OTP",
-      html: `<h1>${otp}</h1>`
+      html: `<h2>Your OTP is: ${otp}</h2>`,
     });
 
     console.log("Mail sent");
