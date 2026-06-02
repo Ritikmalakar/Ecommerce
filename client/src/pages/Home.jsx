@@ -263,6 +263,7 @@ export default function Home() {
                         </button>
 
                         {/* Cart */}
+                        {/* Cart */}
                         <button
                           className="btn btn-warning"
                           onClick={() => {
@@ -295,10 +296,12 @@ export default function Home() {
                               JSON.stringify(myCart)
                             );
 
-                            setCart(myCart);
+                            setCart([...myCart]);
 
                             toast.success("Added To Cart");
-                            window.location.href();
+
+                            // Cart Page Open
+                            window.location.href = "/cart";
                           }}
                         >
                           Add To Cart
