@@ -60,8 +60,6 @@ export default function Details() {
     setCart(myCart);
 
     toast.success("Added To Cart");
-
-    window.location.href();
   };
 
   return (
