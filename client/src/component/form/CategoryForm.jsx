@@ -14,7 +14,7 @@ export default function CategoryForm({ submitData, value, setValue }) {
             type='text'
             className='form-control'
             placeholder='Enter New Category'
-            name='category'
+            name='name'
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
