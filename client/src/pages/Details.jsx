@@ -61,7 +61,7 @@ export default function Details() {
 
     toast.success("Added To Cart");
 
-    window.location.href = "/cart";
+    window.location.href();
   };
 
   return (
