@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      " http://100.58.109.23:3000",
       "https://quick-mart-unqa.onrender.com"
     ],
     credentials: true
