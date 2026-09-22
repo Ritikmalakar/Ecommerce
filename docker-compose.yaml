@@ -1,5 +1,4 @@
 services:
-
   server:
     build:
       context: ./server
@@ -14,8 +13,8 @@ services:
     build:
       context: ./client
       args:
-        VITE_API_URL: ${VITE_API_URL}
-        VITE_STRIPE_PUBLIC_KEY: ${VITE_STRIPE_PUBLIC_KEY}
+        VITE_API_URL: http://100.58.109.23:1111
+        VITE_STRIPE_PUBLIC_KEY: $VITE_STRIPE_PUBLIC_KEY
     container_name: ecommerce-client
     ports:
       - "3000:80"
