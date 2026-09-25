@@ -20,6 +20,7 @@ pipeline {
                     sh '''
                         echo "$BACKEND_ENV" > server/.env
                         echo "$FRONTEND_ENV" > client/.env
+                        cp client/.env .env
                     '''
                 }
             }
@@ -41,7 +42,12 @@ pipeline {
             steps {
                 sh '''
                     docker compose ps
+
+                    echo "Backend test:"
                     curl -f http://localhost:1111/category/getAll
+
+                    echo ""
+                    echo "Frontend test:"
                     curl -f http://localhost:3000
                 '''
             }
@@ -51,6 +57,7 @@ pipeline {
     post {
         always {
             sh '''
+                rm -f .env
                 rm -f server/.env
                 rm -f client/.env
             '''
