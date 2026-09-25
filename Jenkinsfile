@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -10,28 +11,15 @@ pipeline {
             }
         }
 
-        stage('Create Environment Files') {
+        stage('Create ENV') {
             steps {
                 withCredentials([
-                    string(
-                        credentialsId: 'ecommerce-backend-env',
-                        variable: 'BACKEND_ENV'
-                    ),
-                    string(
-                        credentialsId: 'ecommerce-frontend-env',
-                        variable: 'FRONTEND_ENV'
-                    )
+                    string(credentialsId: 'ecommerce-backend-env', variable: 'BACKEND_ENV'),
+                    string(credentialsId: 'ecommerce-frontend-env', variable: 'FRONTEND_ENV')
                 ]) {
                     sh '''
-                        set +x
-
-                        printf '%s\\n' "$BACKEND_ENV" > server/.env
-                        printf '%s\\n' "$FRONTEND_ENV" > client/.env
-
-                        chmod 600 server/.env
-                        chmod 600 client/.env
-
-                        echo "Environment files created"
+                        echo "$BACKEND_ENV" > server/.env
+                        echo "$FRONTEND_ENV" > client/.env
                     '''
                 }
             }
@@ -39,51 +27,42 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh '''
-                    docker compose down || true
-                    docker compose build --no-cache
-                '''
+                sh 'docker compose build'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                    docker compose up -d
-                '''
+                sh 'docker compose up -d'
             }
         }
 
-        stage('Check') {
+        stage('Test') {
             steps {
                 sh '''
                     docker compose ps
-
-                    echo "Backend test:"
                     curl -f http://localhost:1111/category/getAll
-
-                    echo ""
-                    echo "Frontend test:"
-                    curl -f -I http://localhost:3000
+                    curl -f http://localhost:3000
                 '''
             }
         }
     }
 
     post {
-        success {
-            echo 'Ecommerce deployment successful!'
-        }
-
-        failure {
-            echo 'Ecommerce deployment failed!'
-        }
-
         always {
             sh '''
                 rm -f server/.env
                 rm -f client/.env
             '''
         }
+
+        success {
+            echo 'Ecommerce Deployment Successful!'
+        }
+
+        failure {
+            echo 'Ecommerce Deployment Failed!'
+        }
     }
 }
+
